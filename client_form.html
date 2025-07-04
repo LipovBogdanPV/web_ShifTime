@@ -8,78 +8,63 @@
 <body>
   <div class="container my-5">
     <h2>Дані клієнта</h2>
-
-    <form id="client-form">
+ 
+    <form id="client-form" action="https://docs.google.com/forms/d/e/1FAIpQLSc4hZGOB-_3Wiv5VNg7_Q8Tg1BD_hVK9oG6EBHIMYMhogJmuA/formResponse" method="POST" target="_blank">
       <div class="mb-3">
         <label class="form-label">Місто</label>
-        <input type="text" class="form-control" id="city" required placeholder="Вінниця">
+        <input type="text" name="entry.137853710" class="form-control" id="city" required placeholder="Вінниця">
       </div>
       <div class="mb-3">
         <label class="form-label">Відділення Нової Пошти</label>
-        <input type="text" class="form-control" id="np" required placeholder="25">
+        <input type="text" name="entry.351495845" class="form-control" id="np" required placeholder="25">
       </div>
       <div class="mb-3">
         <label class="form-label">Прізвище Ім'я</label>
-        <input type="text" class="form-control" id="name" required placeholder="Серивко Маргарита">
+        <input type="text" name="entry.2038561390" class="form-control" id="name" required placeholder="Серивко Маргарита">
       </div>
       <div class="mb-3">
         <label class="form-label">Телефон</label>
-        <input type="text" class="form-control" id="phone" required placeholder="0674229641">
+        <input type="text" name="entry.658735013" class="form-control" id="phone" required placeholder="0674229641">
+      </div>
+      <textarea type="hidden" id="orderField" name="entry.2048490362" class="border p-3"></textarea>
+
+      <div class="mt-4 d-none" id="final-order-block">
+        <h5>Фінальне замовлення:</h5>
+        <pre id="final-order-summary" class="border p-3"></pre>
       </div>
       <button type="submit" class="btn btn-primary">Згенерувати чек</button>
     </form>
 
-    <div class="mt-4 d-none" id="final-order-block">
-      <h5>Фінальне замовлення:</h5>
-      <pre id="final-order-summary" class="border p-3"></pre>
-      <button id="save-to-sheet" class="btn btn-success">Зберегти в Google Таблицю</button>
-    </div>
+    
+
   </div>
   <script>
-    let API_URL = "https://script.google.com/macros/s/AKfycbz4ASL96hpxGcLn_A29--aUGyCfWjCuLZ_xNOFs_Q1mplJNaWm9oemfOSZ5ackS424u/exec";
+
     // Оформлення сторінка client_form
     document.getElementById("client-form").addEventListener("submit", function(event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        const city = document.getElementById("city").value.trim();
-        const np = document.getElementById("np").value.trim();
-        const name = document.getElementById("name").value.trim();
-        const phone = document.getElementById("phone").value.trim();
+    const city = document.getElementById("city").value.trim();
+    const np = document.getElementById("np").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
 
-        const order = localStorage.getItem("orderSummary") || "";
-        let finalOrder = order;
-        finalOrder += `\n${city}\nНова пошта ${np}\n${name}\n${phone}\n* * * * * * * * * * * * * *`;
+    const order = localStorage.getItem("orderSummary") || "(Замовлення не вибрано)";
+    const finalOrder = `${order}\n${city}\nНова пошта ${np}\n${name}\n${phone}\n* * * * * * * * * * * * * *`;
 
-        document.getElementById("final-order-summary").textContent = finalOrder;
-        document.getElementById("final-order-block").classList.remove("d-none");
+    // 👇️ встановлюємо в textarea, яка має правильне name="entry.X"
+    document.getElementById("orderField").value = finalOrder;
 
-        localStorage.setItem("finalOrderSummary", finalOrder);
-    });
+    // 👇️ показуємо у візуальному блоці
+    document.getElementById("final-order-summary").textContent = finalOrder;
+    document.getElementById("final-order-block").classList.remove("d-none");
 
-    document.getElementById("save-to-sheet").addEventListener("click", function() {
-        const finalOrder = localStorage.getItem("finalOrderSummary");
+    // 👇️ автоматично відправляємо форму (бо form має target="_blank")
+    this.submit();
 
-        fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ order: finalOrder }),
-          headers: { "Content-Type": "application/json" }
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            alert("Замовлення успішно збережене в таблиці!");
-          } else {
-            alert("Сталася помилка при збереженні.");
-          }
-        
-        })
-        .then(data => console.log(data))
-        .catch(err => {
-          console.error("Помилка:", err);
-          alert("Не вдалося підключитися до сервера.");
-        });
-        
-    });
+    // 👇️ очищаємо localStorage
+    localStorage.removeItem("orderSummary");
+  });
 
   </script>
 

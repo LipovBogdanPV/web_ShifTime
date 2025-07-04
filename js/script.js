@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwjYLe8udZMVhVKUHC-yHh38QNjRqb5tR1Dk7w-8Txu18U0egH5REzSyY87IuzPJecc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz4ASL96hpxGcLn_A29--aUGyCfWjCuLZ_xNOFs_Q1mplJNaWm9oemfOSZ5ackS424u/exec";
 let allData = [];
 let selectedCategory = "";
 let selectedSubcategory = "";

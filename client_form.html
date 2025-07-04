@@ -35,55 +35,53 @@
       <button id="save-to-sheet" class="btn btn-success">Зберегти в Google Таблицю</button>
     </div>
   </div>
-<!--
-  https://script.google.com/macros/s/AKfycbxFTR8vpTTwz-PjBshf05VbNG-OTZdOwZA-R2MN-lrVzSBdSrJDTeN9geM_HVlbYA8s/exec
--->
   <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbxFTR8vpTTwz-PjBshf05VbNG-OTZdOwZA-R2MN-lrVzSBdSrJDTeN9geM_HVlbYA8s/exec"; // встав сюди URL Apps Script
+    let API_URL = "https://script.google.com/macros/s/AKfycbwjYLe8udZMVhVKUHC-yHh38QNjRqb5tR1Dk7w-8Txu18U0egH5REzSyY87IuzPJecc/exec";
+    // Оформлення сторінка client_form
+    document.getElementById("client-form").addEventListener("submit", function(event) {
+        event.preventDefault();
 
-  document.getElementById("client-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+        const city = document.getElementById("city").value.trim();
+        const np = document.getElementById("np").value.trim();
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
 
-    const city = document.getElementById("city").value.trim();
-    const np = document.getElementById("np").value.trim();
-    const name = document.getElementById("name").value.trim();
-    const phone = document.getElementById("phone").value.trim();
+        const order = localStorage.getItem("orderSummary") || "";
+        let finalOrder = order;
+        finalOrder += `\n${city}\nНова пошта ${np}\n${name}\n${phone}\n* * * * * * * * * * * * * *`;
 
-    const order = localStorage.getItem("orderSummary") || "";
-    let finalOrder = order;
-    finalOrder += `\n${city}\nНова пошта ${np}\n${name}\n${phone}\n* * * * * * * * * * * * * *`;
+        document.getElementById("final-order-summary").textContent = finalOrder;
+        document.getElementById("final-order-block").classList.remove("d-none");
 
-    document.getElementById("final-order-summary").textContent = finalOrder;
-    document.getElementById("final-order-block").classList.remove("d-none");
-
-    localStorage.setItem("finalOrderSummary", finalOrder);
-  });
-
-  document.getElementById("save-to-sheet").addEventListener("click", function() {
-    const finalOrder = localStorage.getItem("finalOrderSummary");
-
-    fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ order: finalOrder }),
-      headers: { "Content-Type": "application/json" }
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "success") {
-        alert("Замовлення успішно збережене в таблиці!");
-      } else {
-        alert("Сталася помилка при збереженні.");
-      }
-    
-    })
-    .then(data => console.log(data))
-    .catch(err => {
-      console.error("Помилка:", err);
-      alert("Не вдалося підключитися до сервера.");
+        localStorage.setItem("finalOrderSummary", finalOrder);
     });
-    
-  });
-</script>
+
+    document.getElementById("save-to-sheet").addEventListener("click", function() {
+        const finalOrder = localStorage.getItem("finalOrderSummary");
+
+        fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ order: finalOrder }),
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            alert("Замовлення успішно збережене в таблиці!");
+          } else {
+            alert("Сталася помилка при збереженні.");
+          }
+        
+        })
+        .then(data => console.log(data))
+        .catch(err => {
+          console.error("Помилка:", err);
+          alert("Не вдалося підключитися до сервера.");
+        });
+        
+    });
+
+  </script>
 
 </body>
 </html>
